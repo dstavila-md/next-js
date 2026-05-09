@@ -46,3 +46,13 @@ export default async function SnippetShowPage(props: SnippetShowPageProps) {
     </div>
   );
 }
+
+// This function is used by Next.js to determine which dynamic routes to pre-render at build time.
+// In this case, it fetches all snippets from the database and generates a list of paths based on their IDs.
+// This allows Next.js to statically generate pages for each snippet, improving performance and SEO.
+export async function generateStaticParams() {
+  const snippets = await db.snippet.findMany();
+  return snippets.map((snippet) => {
+    return { id: snippet.id.toString() };
+  });
+}

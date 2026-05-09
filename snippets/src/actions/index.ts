@@ -1,7 +1,8 @@
 'use server';
 
-import { db } from '@/db';
+import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
+import { db } from '@/db';
 
 export async function editSnippet(id: number, code: string) {
   await db.snippet.update({ where: { id }, data: { code } });
@@ -10,6 +11,10 @@ export async function editSnippet(id: number, code: string) {
 
 export async function deleteSnippet(id: number) {
   await db.snippet.delete({ where: { id } });
+
+  // re-render the homepage
+  revalidatePath('/');
+  // Redirect the user back to the root route
   redirect('/');
 }
 
@@ -44,6 +49,8 @@ export async function createSnippet(
       return { message: 'Something went wrong...' };
     }
   }
+  // re-render the homepage
+  revalidatePath('/');
   // Redirect the user back to the root route
   redirect('/');
 }

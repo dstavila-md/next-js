@@ -1,4 +1,5 @@
 import NextAuth from 'next-auth';
+import { Session, User } from 'next-auth';
 import Github from 'next-auth/providers/github';
 import { PrismaAdapter } from '@auth/prisma-adapter';
 import { db } from '@/db';
@@ -23,8 +24,8 @@ export const {
   ],
   callbacks: {
     // Usually not needed, here we are fixing a bug in nextauth
-    async session({ session, user }: any) {
-      if (session && user) {
+    async session({ session, user }: { session: Session; user: User }) {
+      if (session && session.user && user) {
         session.user.id = user.id;
       }
       return session;

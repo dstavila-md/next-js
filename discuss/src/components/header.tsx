@@ -1,4 +1,4 @@
-import Link from 'next/Link';
+import Link from 'next/link';
 
 import {
   Navbar,
@@ -60,7 +60,7 @@ export default async function Header() {
       <NavbarBrand>
         <Link href='/' className='font-bold'>
           Discuss
-        </Link>{' '}
+        </Link>
       </NavbarBrand>
       <NavbarContent justify='center'>
         <NavbarItem>

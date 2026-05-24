@@ -1,6 +1,6 @@
 'use client';
 
-import { useActionState } from 'react';
+import { useActionState, startTransition } from 'react';
 import {
   Popover,
   PopoverContent,
@@ -16,13 +16,21 @@ export default function TopicCreateForm() {
     errors: {},
   });
 
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+    startTransition(() => {
+      action(formData);
+    });
+  };
+
   return (
     <Popover placement='left'>
       <PopoverTrigger>
         <Button color='primary'>Create a Topic</Button>
       </PopoverTrigger>
       <PopoverContent>
-        <form action={action}>
+        <form onSubmit={handleSubmit} noValidate>
           <div className='flex flex-col gap-4 p-4 w-80'>
             <h3 className='text-lg'>Createa a Topic</h3>
             <Input

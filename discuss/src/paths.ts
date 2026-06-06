@@ -9,7 +9,7 @@ const paths = {
     return `/topics/${topicSlug}/post/new`;
   },
   postShow(topicSlug: string, postId: string) {
-    return `/topics/${topicSlug}/post/${postId}`;
+    return `/topics/${topicSlug}/posts/${postId}`;
   },
 };
 

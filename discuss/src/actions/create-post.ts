@@ -29,6 +29,15 @@ export async function createPost(
     return { errors: result.error.flatten().fieldErrors };
   }
 
+  const session = await auth();
+  if (!session || !session.user) {
+    return {
+      errors: {
+        _form: ['You must be signed in to do this'],
+      },
+    };
+  }
+
   return { errors: {} };
   // TODO: revalidate the topic show page
 }

@@ -18,6 +18,7 @@ interface CreatePostFormState {
 }
 
 export async function createPost(
+  slug: string,
   formState: CreatePostFormState,
   formData: FormData,
 ): Promise<CreatePostFormState> {
@@ -38,6 +39,95 @@ export async function createPost(
     };
   }
 
+  const topic = await db.topic.findFirst({ where: { slug } });
+  if (!topic) {
+    return { errors: { _form: ['Cannot find topic'] } };
+  }
+
   return { errors: {} };
   // TODO: revalidate the topic show page
 }
+
+/**
+ * Alternate implementation instead of using server action binding
+ */
+
+// interface CreatePostFormState {
+//   slug: string;
+//   errors: {
+//     title?: string[];
+//     content?: string[];
+//     _form?: string[];
+//   };
+// }
+
+// export async function createPost(
+//   {slug}: CreatePostFormState,
+//   formData: FormData
+// ): Promise<CreatePostFormState> {
+//   const result = createPostSchema.safeParse({
+//     title: formData.get('title'),
+//     content: formData.get('content'),
+//   });
+
+//   if (!result.success) {
+//     return {
+//       slug,
+//       errors: result.error.flatten().fieldErrors,
+//     };
+//   }
+
+//   const session = await auth();
+//   if (!session || !session.user) {
+//     return {
+//       slug,
+//       errors: {
+//         _form: ['You must be signed in to do this'],
+//       },
+//     };
+//   }
+
+//   const topic = await db.topic.findFirst({
+//     where: { slug },
+//   });
+
+//   if (!topic) {
+//     return {
+//       slug,
+//       errors: {
+//         _form: ['Cannot find topic'],
+//       },
+//     };
+//   }
+
+//   let post: Post;
+//   try {
+//     post = await db.post.create({
+//       data: {
+//         title: result.data.title,
+//         content: result.data.content,
+//         userId: session.user.id,
+//         topicId: topic.id,
+//       },
+//     });
+//   } catch (err: unknown) {
+//     if (err instanceof Error) {
+//       return {
+//         slug,
+//         errors: {
+//           _form: [err.message],
+//         },
+//       };
+//     } else {
+//       return {
+//         slug,
+//         errors: {
+//           _form: ['Failed to create post'],
+//         },
+//       };
+//     }
+//   }
+
+//   revalidatePath(paths.topicShow(slug));
+//   redirect(paths.postShow(slug, post.id));
+// }
